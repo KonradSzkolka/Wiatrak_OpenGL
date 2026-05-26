@@ -6,6 +6,52 @@
 #include "animation.h"
 #include "textures.h"
 
+
+void setMetalMaterial()
+{
+    GLfloat ambient[] = { 0.20f, 0.20f, 0.22f, 1.0f };
+    GLfloat diffuse[] = { 0.55f, 0.57f, 0.60f, 1.0f };
+    GLfloat specular[] = { 0.85f, 0.85f, 0.88f, 1.0f };
+    GLfloat shininess = 80.0f;
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+
+    glColor3f(0.60f, 0.62f, 0.66f);
+}
+
+void setBladeMaterial()
+{
+    GLfloat ambient[] = { 0.08f, 0.20f, 0.30f, 1.0f };
+    GLfloat diffuse[] = { 0.15f, 0.55f, 0.85f, 1.0f };
+    GLfloat specular[] = { 0.25f, 0.25f, 0.28f, 1.0f };
+    GLfloat shininess = 25.0f;
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+
+    glColor3f(0.15f, 0.55f, 0.85f);
+}
+
+void setHubMaterial()
+{
+    GLfloat ambient[] = { 0.25f, 0.20f, 0.05f, 1.0f };
+    GLfloat diffuse[] = { 0.90f, 0.75f, 0.15f, 1.0f };
+    GLfloat specular[] = { 0.55f, 0.45f, 0.12f, 1.0f };
+    GLfloat shininess = 45.0f;
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shininess);
+
+    glColor3f(0.90f, 0.75f, 0.15f);
+}
+
 void drawWindow()
 {
     // wnêka / tyl okna - tylko minimalnie wiêksza od ramy
@@ -79,15 +125,15 @@ void drawCurtain()
 
 void drawBase()
 {
+    setMetalMaterial();
+
     glPushMatrix();
-    glColor3f(0.2f, 0.2f, 0.23f);
     glTranslatef(0.0f, -2.1f, 0.0f);
     glScalef(3.0f, 0.25f, 2.0f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
     glPushMatrix();
-    glColor3f(0.15f, 0.15f, 0.18f);
     glTranslatef(0.0f, -1.95f, 0.0f);
     glScalef(1.4f, 0.08f, 1.0f);
     glutSolidCube(1.0f);
@@ -96,15 +142,15 @@ void drawBase()
 
 void drawStand()
 {
+    setMetalMaterial();
+
     glPushMatrix();
-    glColor3f(0.6f, 0.6f, 0.63f);
     glTranslatef(0.0f, -1.1f, 0.0f);
     glScalef(0.22f, 1.8f, 0.22f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
     glPushMatrix();
-    glColor3f(0.4f, 0.4f, 0.45f);
     glTranslatef(0.0f, -0.15f, 0.0f);
     glutSolidSphere(0.18f, 24, 24);
     glPopMatrix();
@@ -112,14 +158,14 @@ void drawStand()
 
 void drawMotorBody()
 {
+    setMetalMaterial();
+
     glPushMatrix();
-    glColor3f(0.75f, 0.75f, 0.78f);
     glScalef(1.0f, 0.9f, 1.2f);
     glutSolidSphere(0.45f, 30, 30);
     glPopMatrix();
 
     glPushMatrix();
-    glColor3f(0.3f, 0.3f, 0.35f);
     glTranslatef(0.0f, 0.0f, -0.45f);
     glScalef(0.5f, 0.5f, 0.8f);
     glutSolidCube(1.0f);
@@ -163,7 +209,7 @@ void drawBlades()
     glPushMatrix();
     glRotatef(gState.bladeAngle, 0.0f, 0.0f, 1.0f);
 
-    glColor3f(0.15f, 0.55f, 0.85f);
+    setBladeMaterial();
 
     for (int i = 0; i < 3; i++)
     {
@@ -173,8 +219,9 @@ void drawBlades()
         glPopMatrix();
     }
 
-    glColor3f(0.9f, 0.75f, 0.15f);
+    setHubMaterial();
     glutSolidSphere(0.12f, 20, 20);
+
     glPopMatrix();
 }
 
@@ -208,7 +255,7 @@ void drawGuardWireDisk(float z)
 
 void drawGuard()
 {
-    glColor3f(0.88f, 0.88f, 0.9f);
+    setMetalMaterial();
 
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, 0.22f);
@@ -225,6 +272,7 @@ void drawGuard()
     glPopMatrix();
 
     glDisable(GL_LIGHTING);
+    glColor3f(0.85f, 0.85f, 0.88f);
     drawGuardWireDisk(0.18f);
     drawGuardWireDisk(-0.18f);
 
@@ -310,33 +358,6 @@ void drawTable()
     glPopMatrix();
 }
 
-//void drawRoom()
-//{
-//    // podloga
-//    glPushMatrix();
-//    glColor3f(0.36f, 0.30f, 0.24f);
-//    glTranslatef(0.0f, -4.65f, -1.0f);
-//    glScalef(18.0f, 0.12f, 16.0f);
-//    glutSolidCube(1.0f);
-//    glPopMatrix();
-//
-//    // tylna sciana
-//    glPushMatrix();
-//    glColor3f(0.96f, 0.92f, 0.84f);
-//    glTranslatef(0.0f, 0.3f, -6.2f);
-//    glScalef(18.0f, 10.0f, 0.12f);
-//    glutSolidCube(1.0f);
-//    glPopMatrix();
-//
-//    // lewa sciana
-//    glPushMatrix();
-//    glColor3f(0.92f, 0.88f, 0.80f);
-//    glTranslatef(-6.8f, 0.3f, -1.0f);
-//    glScalef(0.12f, 10.0f, 16.0f);
-//    glutSolidCube(1.0f);
-//    glPopMatrix();
-//}
-
 void drawTexturedFloor()
 {
     glEnable(GL_TEXTURE_2D);
@@ -404,6 +425,57 @@ void drawRoom()
     drawTexturedLeftWall();
 }
 
+void drawFanShadow()
+{
+    glDisable(GL_LIGHTING);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glColor4f(0.0f, 0.0f, 0.0f, 0.28f);
+
+    glPushMatrix();
+    // cien tuz nad blatem, pod wiatrakiem
+    glTranslatef(0.0f, -2.255f, -3.0f);
+    glScalef(1.7f, 1.0f, 1.15f);
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+
+    for (int i = 0; i <= 40; i++)
+    {
+        float a = 2.0f * 3.1415926f * i / 40.0f;
+        glVertex3f(cos(a), 0.0f, sin(a));
+    }
+    glEnd();
+
+    glPopMatrix();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+}
+
+void drawLightMarkers()
+{
+    glDisable(GL_LIGHTING);
+
+    // marker zarowki
+    glPushMatrix();
+    glColor3f(1.0f, 0.95f, 0.6f);
+    glTranslatef(0.0f, 4.3f, 0.0f);
+    glutSolidSphere(0.12f, 12, 12);
+    glPopMatrix();
+
+    // marker swiatla z okna
+    glPushMatrix();
+    glColor3f(1.0f, 0.8f, 0.4f);
+    glTranslatef(-4.0f, 2.0f, 0.0f);
+    glutSolidSphere(0.12f, 12, 12);
+    glPopMatrix();
+
+    glEnable(GL_LIGHTING);
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -414,7 +486,9 @@ void display()
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(4.5, 3.0, 8.5, 0.0, -0.2, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(7.5, 4.8, 13.5,
+        0.0, -0.8, -1.5,
+        0.0, 1.0, 0.0);
 
     setLights();
 
@@ -429,6 +503,8 @@ void display()
     drawStand();
     drawHead();
     glPopMatrix();
+
+    drawFanShadow();
 
     glutSwapBuffers();
 }

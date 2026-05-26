@@ -2,6 +2,9 @@
 
 struct AppState
 {
+    bool light0Enabled = true;
+    bool light1Enabled = true;
+
     float curtainTime = 0.0f;
     float tiltAngle = 0.0f;
     float bladeAngle = 0.0f;

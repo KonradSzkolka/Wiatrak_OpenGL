@@ -10,6 +10,7 @@ void keyboard(unsigned char key, int x, int y)
     case 27:
         exit(0);
         break;
+
     case '0':
         gState.fanSpeedLevel = 0;
         break;
@@ -22,9 +23,18 @@ void keyboard(unsigned char key, int x, int y)
     case '3':
         gState.fanSpeedLevel = 3;
         break;
+
     case 'o':
     case 'O':
         gState.oscillationOn = !gState.oscillationOn;
+        break;
+
+    case '4':
+        gState.light0Enabled = !gState.light0Enabled;
+        break;
+
+    case '5':
+        gState.light1Enabled = !gState.light1Enabled;
         break;
     }
 
