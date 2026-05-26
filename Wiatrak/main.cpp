@@ -4,6 +4,7 @@
 
 using namespace std;
 
+float tiltAngle = 0.0f;
 float bladeAngle = 0.0f;
 int fanSpeedLevel = 0; // 0,1,2,3
 bool oscillationOn = true;
@@ -120,9 +121,50 @@ void drawMotorBody()
 void drawBlade()
 {
     glPushMatrix();
-    glTranslatef(0.75f, 0.0f, 0.0f);
-    glScalef(1.5f, 0.22f, 0.05f);
-    glutSolidCube(1.0f);
+
+    glBegin(GL_POLYGON);
+    glNormal3f(0.0f, 0.0f, 1.0f);
+
+    glVertex3f(0.05f, 0.00f, 0.03f);
+    glVertex3f(0.20f, 0.10f, 0.03f);
+    glVertex3f(0.55f, 0.16f, 0.03f);
+    glVertex3f(1.00f, 0.12f, 0.03f);
+    glVertex3f(1.28f, 0.05f, 0.03f);
+    glVertex3f(1.38f, 0.00f, 0.03f);
+    glVertex3f(1.28f, -0.05f, 0.03f);
+    glVertex3f(1.00f, -0.12f, 0.03f);
+    glVertex3f(0.55f, -0.16f, 0.03f);
+    glVertex3f(0.20f, -0.10f, 0.03f);
+    glEnd();
+
+    glBegin(GL_POLYGON);
+    glNormal3f(0.0f, 0.0f, -1.0f);
+
+    glVertex3f(0.05f, 0.00f, -0.03f);
+    glVertex3f(0.20f, -0.10f, -0.03f);
+    glVertex3f(0.55f, -0.16f, -0.03f);
+    glVertex3f(1.00f, -0.12f, -0.03f);
+    glVertex3f(1.28f, -0.05f, -0.03f);
+    glVertex3f(1.38f, 0.00f, -0.03f);
+    glVertex3f(1.28f, 0.05f, -0.03f);
+    glVertex3f(1.00f, 0.12f, -0.03f);
+    glVertex3f(0.55f, 0.16f, -0.03f);
+    glVertex3f(0.20f, 0.10f, -0.03f);
+    glEnd();
+
+    glBegin(GL_QUAD_STRIP);
+    for (int i = 0; i <= 10; i++)
+    {
+        float x[10] = { 0.05f, 0.20f, 0.55f, 1.00f, 1.28f, 1.38f, 1.28f, 1.00f, 0.55f, 0.20f };
+        float y[10] = { 0.00f, 0.10f, 0.16f, 0.12f, 0.05f, 0.00f,-0.05f,-0.12f,-0.16f,-0.10f };
+
+        int a = i % 10;
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glVertex3f(x[a], y[a], 0.03f);
+        glVertex3f(x[a], y[a], -0.03f);
+    }
+    glEnd();
+
     glPopMatrix();
 }
 
@@ -147,25 +189,71 @@ void drawBlades()
     glPopMatrix();
 }
 
+
+void drawGuardWireDisk(float z)
+{
+    for (float r = 0.45f; r <= 1.40f; r += 0.22f)
+    {
+        glBegin(GL_LINE_LOOP);
+        for (int i = 0; i < 100; i++)
+        {
+            float angle = 2.0f * 3.1415926f * i / 100.0f;
+            float x = r * cos(angle);
+            float y = r * sin(angle);
+            glVertex3f(x, y, z);
+        }
+        glEnd();
+    }
+
+    glBegin(GL_LINES);
+    for (int i = 0; i < 24; i++)
+    {
+        float angle = 2.0f * 3.1415926f * i / 24.0f;
+        float x = 1.40f * cos(angle);
+        float y = 1.40f * sin(angle);
+
+        glVertex3f(0.0f, 0.0f, z);
+        glVertex3f(x, y, z);
+    }
+    glEnd();
+}
+
 void drawGuard()
 {
+    glColor3f(0.88f, 0.88f, 0.9f);
+
+    // pelne obrecze
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, 0.22f);
+    glutSolidTorus(0.04f, 1.42f, 20, 80);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, -0.22f);
+    glutSolidTorus(0.04f, 1.42f, 20, 80);
+    glPopMatrix();
+
+    glPushMatrix();
+    glutSolidTorus(0.025f, 1.18f, 16, 70);
+    glPopMatrix();
+
+    // druty przod / tyl
     glDisable(GL_LIGHTING);
-    glColor3f(0.85f, 0.85f, 0.85f);
+    drawGuardWireDisk(0.18f);
+    drawGuardWireDisk(-0.18f);
 
-    for (float r = 0.5f; r <= 1.5f; r += 0.25f)
-        drawWireCircle(r);
-
+    // laczniki miedzy przodem i tylem
     glBegin(GL_LINES);
     for (int i = 0; i < 16; i++)
     {
         float angle = 2.0f * 3.1415926f * i / 16.0f;
-        float x = 1.5f * cos(angle);
-        float y = 1.5f * sin(angle);
-        glVertex3f(0.0f, 0.0f, 0.0f);
-        glVertex3f(x, y, 0.0f);
+        float x = 1.42f * cos(angle);
+        float y = 1.42f * sin(angle);
+
+        glVertex3f(x, y, -0.22f);
+        glVertex3f(x, y, 0.22f);
     }
     glEnd();
-
     glEnable(GL_LIGHTING);
 }
 
@@ -174,6 +262,7 @@ void drawHead()
     glPushMatrix();
     glTranslatef(0.0f, 0.15f, 0.0f);
     glRotatef(headAngle, 0.0f, 1.0f, 0.0f);
+    glRotatef(tiltAngle, 1.0f, 0.0f, 0.0f);
 
     drawMotorBody();
 
@@ -183,7 +272,7 @@ void drawHead()
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(0.0f, 0.0f, 0.7f);
+    glTranslatef(0.0f, 0.0f, 0.55f);
     drawGuard();
     glPopMatrix();
 
@@ -197,12 +286,45 @@ void drawHead()
     glPopMatrix();
 }
 
-void drawFloor()
+void drawTable()
 {
+    // blat
     glPushMatrix();
-    glColor3f(0.35f, 0.2f, 0.1f);
-    glTranslatef(0.0f, -2.3f, 0.0f);
-    glScalef(8.0f, 0.08f, 5.0f);
+    glColor3f(0.45f, 0.28f, 0.16f);
+    glTranslatef(0.0f, -2.35f, 0.0f);
+    glScalef(8.0f, 0.18f, 5.0f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // noga 1
+    glPushMatrix();
+    glColor3f(0.32f, 0.20f, 0.12f);
+    glTranslatef(-3.2f, -3.5f, 1.8f);
+    glScalef(0.22f, 2.2f, 0.22f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // noga 2
+    glPushMatrix();
+    glColor3f(0.32f, 0.20f, 0.12f);
+    glTranslatef(3.2f, -3.5f, 1.8f);
+    glScalef(0.22f, 2.2f, 0.22f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // noga 3
+    glPushMatrix();
+    glColor3f(0.32f, 0.20f, 0.12f);
+    glTranslatef(-3.2f, -3.5f, -1.8f);
+    glScalef(0.22f, 2.2f, 0.22f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // noga 4
+    glPushMatrix();
+    glColor3f(0.32f, 0.20f, 0.12f);
+    glTranslatef(3.2f, -3.5f, -1.8f);
+    glScalef(0.22f, 2.2f, 0.22f);
     glutSolidCube(1.0f);
     glPopMatrix();
 }
@@ -221,7 +343,7 @@ void display()
 
     setLights();
 
-    drawFloor();
+    drawTable();
     drawBase();
     drawStand();
     drawHead();
@@ -249,6 +371,24 @@ void update()
             headAngle = -35.0f;
             headDirection = 1.0f;
         }
+    }
+
+    glutPostRedisplay();
+}
+
+void specialKeys(int key, int x, int y)
+{
+    switch (key)
+    {
+    case GLUT_KEY_UP:
+        if (tiltAngle > -20.0f)
+            tiltAngle -= 2.0f;
+        break;
+
+    case GLUT_KEY_DOWN:
+        if (tiltAngle < 0.0f)
+            tiltAngle += 2.0f;
+        break;
     }
 
     glutPostRedisplay();
@@ -292,6 +432,7 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);
     glutIdleFunc(update);
     glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialKeys);
 
     glutMainLoop();
     return 0;
