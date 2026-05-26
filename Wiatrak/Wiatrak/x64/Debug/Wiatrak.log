@@ -1,2 +1,6 @@
-﻿  scene.cpp
+﻿  main.cpp
+  scene.cpp
+  stb_image_impl.cpp
+  textures.cpp
+  Generowanie kodu...
   Wiatrak.vcxproj -> C:\Users\szkol_512iq3a\Documents\GitHub\Wiatrak_OpenGL\Wiatrak\x64\Debug\Wiatrak.exe

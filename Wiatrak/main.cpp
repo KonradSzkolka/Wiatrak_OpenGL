@@ -1,8 +1,10 @@
+#include <iostream>
 #include <GL/glut.h>
 #include "init.h"
 #include "scene.h"
 #include "animation.h"
 #include "input.h"
+#include "textures.h"
 
 int main(int argc, char** argv)
 {
@@ -12,6 +14,11 @@ int main(int argc, char** argv)
     glutCreateWindow("Wiatrak 3D");
 
     init();
+
+    if (!loadTextures())
+    {
+        std::cout << "Blad ladowania tekstur!" << std::endl;
+    }
 
     glutDisplayFunc(display);
     glutIdleFunc(update);
