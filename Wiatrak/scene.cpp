@@ -4,6 +4,7 @@
 #include "init.h"
 #include "app_state.h"
 #include "animation.h"
+#include "textures.h"
 
 void drawWindow()
 {
@@ -309,31 +310,98 @@ void drawTable()
     glPopMatrix();
 }
 
+//void drawRoom()
+//{
+//    // podloga
+//    glPushMatrix();
+//    glColor3f(0.36f, 0.30f, 0.24f);
+//    glTranslatef(0.0f, -4.65f, -1.0f);
+//    glScalef(18.0f, 0.12f, 16.0f);
+//    glutSolidCube(1.0f);
+//    glPopMatrix();
+//
+//    // tylna sciana
+//    glPushMatrix();
+//    glColor3f(0.96f, 0.92f, 0.84f);
+//    glTranslatef(0.0f, 0.3f, -6.2f);
+//    glScalef(18.0f, 10.0f, 0.12f);
+//    glutSolidCube(1.0f);
+//    glPopMatrix();
+//
+//    // lewa sciana
+//    glPushMatrix();
+//    glColor3f(0.92f, 0.88f, 0.80f);
+//    glTranslatef(-6.8f, 0.3f, -1.0f);
+//    glScalef(0.12f, 10.0f, 16.0f);
+//    glutSolidCube(1.0f);
+//    glPopMatrix();
+//}
+
+void drawTexturedFloor()
+{
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, gFloorTexture);
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    glBegin(GL_QUADS);
+    glNormal3f(0.0f, 1.0f, 0.0f);
+
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-9.0f, -4.7f, 7.0f);
+    glTexCoord2f(6.0f, 0.0f); glVertex3f(9.0f, -4.7f, 7.0f);
+    glTexCoord2f(6.0f, 6.0f); glVertex3f(9.0f, -4.7f, -9.0f);
+    glTexCoord2f(0.0f, 6.0f); glVertex3f(-9.0f, -4.7f, -9.0f);
+
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void drawTexturedBackWall()
+{
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    glBegin(GL_QUADS);
+    glNormal3f(0.0f, 0.0f, 1.0f);
+
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-9.0f, -4.7f, -6.2f);
+    glTexCoord2f(5.0f, 0.0f); glVertex3f(9.0f, -4.7f, -6.2f);
+    glTexCoord2f(5.0f, 3.0f); glVertex3f(9.0f, 5.3f, -6.2f);
+    glTexCoord2f(0.0f, 3.0f); glVertex3f(-9.0f, 5.3f, -6.2f);
+
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
+void drawTexturedLeftWall()
+{
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, gWallTexture);
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    glBegin(GL_QUADS);
+    glNormal3f(1.0f, 0.0f, 0.0f);
+
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-6.8f, -4.7f, 7.0f);
+    glTexCoord2f(5.0f, 0.0f); glVertex3f(-6.8f, -4.7f, -9.0f);
+    glTexCoord2f(5.0f, 3.0f); glVertex3f(-6.8f, 5.3f, -9.0f);
+    glTexCoord2f(0.0f, 3.0f); glVertex3f(-6.8f, 5.3f, 7.0f);
+
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glDisable(GL_TEXTURE_2D);
+}
+
 void drawRoom()
 {
-    // podloga
-    glPushMatrix();
-    glColor3f(0.36f, 0.30f, 0.24f);
-    glTranslatef(0.0f, -4.65f, -1.0f);
-    glScalef(18.0f, 0.12f, 16.0f);
-    glutSolidCube(1.0f);
-    glPopMatrix();
-
-    // tylna sciana
-    glPushMatrix();
-    glColor3f(0.96f, 0.92f, 0.84f);
-    glTranslatef(0.0f, 0.3f, -6.2f);
-    glScalef(18.0f, 10.0f, 0.12f);
-    glutSolidCube(1.0f);
-    glPopMatrix();
-
-    // lewa sciana
-    glPushMatrix();
-    glColor3f(0.92f, 0.88f, 0.80f);
-    glTranslatef(-6.8f, 0.3f, -1.0f);
-    glScalef(0.12f, 10.0f, 16.0f);
-    glutSolidCube(1.0f);
-    glPopMatrix();
+    drawTexturedFloor();
+    drawTexturedBackWall();
+    drawTexturedLeftWall();
 }
 
 void display()

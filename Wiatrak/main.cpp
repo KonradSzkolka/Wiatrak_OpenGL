@@ -6,6 +6,7 @@
 #include "input.h"
 #include "textures.h"
 
+
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);
