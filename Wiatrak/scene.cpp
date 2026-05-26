@@ -7,52 +7,59 @@
 
 void drawWindow()
 {
+    // wnêka / tyl okna - tylko minimalnie wiêksza od ramy
     glPushMatrix();
-    glColor3f(0.9f, 0.88f, 0.82f);
-    glTranslatef(-4.45f, 0.2f, 0.0f);
-    glScalef(0.08f, 5.0f, 6.0f);
+    glColor3f(0.55f, 0.36f, 0.22f);
+    glTranslatef(-4.38f, 0.25f, 0.0f);
+    glScalef(0.045f, 3.35f, 3.95f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
+    // rama
     glPushMatrix();
-    glColor3f(0.75f, 0.75f, 0.78f);
-    glTranslatef(-4.3f, 0.25f, 0.0f);
+    glColor3f(0.45f, 0.28f, 0.16f);
+    glTranslatef(-4.30f, 0.25f, 0.0f);
     glScalef(0.06f, 3.0f, 3.6f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
+    // szyba
     glPushMatrix();
-    glColor3f(0.65f, 0.82f, 0.92f);
+    glColor3f(0.72f, 0.86f, 0.92f);
     glTranslatef(-4.22f, 0.25f, 0.0f);
     glScalef(0.03f, 2.5f, 3.1f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
+    // podzial pionowy
     glPushMatrix();
-    glColor3f(0.7f, 0.7f, 0.72f);
-    glTranslatef(-4.2f, 0.25f, 0.0f);
+    glColor3f(0.40f, 0.25f, 0.15f);
+    glTranslatef(-4.20f, 0.25f, 0.0f);
     glScalef(0.04f, 2.5f, 0.08f);
     glutSolidCube(1.0f);
     glPopMatrix();
 }
 
+
 void drawCurtain()
 {
     float strength = getCurtainStrength();
 
+    // karnisz
     glPushMatrix();
-    glColor3f(0.35f, 0.25f, 0.15f);
-    glTranslatef(-4.2f, 1.9f, -0.6f);
+    glColor3f(0.50f, 0.32f, 0.20f);
+    glTranslatef(-4.22f, 1.9f, -0.20f);
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
-    glScalef(3.4f, 0.08f, 0.08f);
+    glScalef(3.55f, 0.08f, 0.08f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
-    glColor3f(0.82f, 0.82f, 0.9f);
+    // zaslona - delikatny roz
+    glColor3f(0.93f, 0.72f, 0.80f);
 
-    for (int i = 0; i < 16; i++)
+    for (int i = 0; i < 18; i++)
     {
-        float z = -1.7f + i * 0.18f;
+        float z = -1.92f + i * 0.19f;
 
         glBegin(GL_QUAD_STRIP);
         for (int j = 0; j <= 16; j++)
@@ -62,8 +69,8 @@ void drawCurtain()
             float wave = sin(localPhase) * strength * 2.0f * (j / 16.0f);
 
             glNormal3f(-1.0f, 0.0f, 0.0f);
-            glVertex3f(-4.15f + wave, y, z);
-            glVertex3f(-4.15f + wave, y, z + 0.16f);
+            glVertex3f(-4.18f + wave, y, z);
+            glVertex3f(-4.18f + wave, y, z + 0.18f);
         }
         glEnd();
     }
@@ -302,6 +309,33 @@ void drawTable()
     glPopMatrix();
 }
 
+void drawRoom()
+{
+    // podloga
+    glPushMatrix();
+    glColor3f(0.36f, 0.30f, 0.24f);
+    glTranslatef(0.0f, -4.65f, -1.0f);
+    glScalef(18.0f, 0.12f, 16.0f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // tylna sciana
+    glPushMatrix();
+    glColor3f(0.96f, 0.92f, 0.84f);
+    glTranslatef(0.0f, 0.3f, -6.2f);
+    glScalef(18.0f, 10.0f, 0.12f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // lewa sciana
+    glPushMatrix();
+    glColor3f(0.92f, 0.88f, 0.80f);
+    glTranslatef(-6.8f, 0.3f, -1.0f);
+    glScalef(0.12f, 10.0f, 16.0f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -316,18 +350,18 @@ void display()
 
     setLights();
 
+    drawRoom();
     drawWindow();
     drawCurtain();
 
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, -3.0f);
-
     drawTable();
     drawBase();
     drawStand();
     drawHead();
-
     glPopMatrix();
 
     glutSwapBuffers();
 }
+

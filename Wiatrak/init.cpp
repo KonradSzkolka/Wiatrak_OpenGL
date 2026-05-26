@@ -23,6 +23,7 @@ void init()
 {
     glClearColor(0.08f, 0.08f, 0.12f, 1.0f);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE);
     initLighting();
 }
 
