@@ -6,7 +6,6 @@
 #include "animation.h"
 #include "textures.h"
 
-
 void setMetalMaterial()
 {
     GLfloat ambient[] = { 0.20f, 0.20f, 0.22f, 1.0f };
@@ -54,7 +53,6 @@ void setHubMaterial()
 
 void drawWindow()
 {
-    // wnêka / tyl okna - tylko minimalnie wiêksza od ramy
     glPushMatrix();
     glColor3f(0.55f, 0.36f, 0.22f);
     glTranslatef(-4.38f, 0.25f, 0.0f);
@@ -62,7 +60,6 @@ void drawWindow()
     glutSolidCube(1.0f);
     glPopMatrix();
 
-    // rama
     glPushMatrix();
     glColor3f(0.45f, 0.28f, 0.16f);
     glTranslatef(-4.30f, 0.25f, 0.0f);
@@ -70,7 +67,6 @@ void drawWindow()
     glutSolidCube(1.0f);
     glPopMatrix();
 
-    // szyba
     glPushMatrix();
     glColor3f(0.72f, 0.86f, 0.92f);
     glTranslatef(-4.22f, 0.25f, 0.0f);
@@ -78,7 +74,6 @@ void drawWindow()
     glutSolidCube(1.0f);
     glPopMatrix();
 
-    // podzial pionowy
     glPushMatrix();
     glColor3f(0.40f, 0.25f, 0.15f);
     glTranslatef(-4.20f, 0.25f, 0.0f);
@@ -87,12 +82,10 @@ void drawWindow()
     glPopMatrix();
 }
 
-
 void drawCurtain()
 {
     float strength = getCurtainStrength();
 
-    // karnisz
     glPushMatrix();
     glColor3f(0.50f, 0.32f, 0.20f);
     glTranslatef(-4.22f, 1.9f, -0.20f);
@@ -101,7 +94,6 @@ void drawCurtain()
     glutSolidCube(1.0f);
     glPopMatrix();
 
-    // zaslona - delikatny roz
     glColor3f(0.93f, 0.72f, 0.80f);
 
     for (int i = 0; i < 18; i++)
@@ -257,6 +249,7 @@ void drawGuard()
 {
     setMetalMaterial();
 
+    // pierœcienie (ju¿ metaliczne)
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, 0.22f);
     glutSolidTorus(0.04f, 1.42f, 20, 80);
@@ -271,8 +264,10 @@ void drawGuard()
     glutSolidTorus(0.025f, 1.18f, 16, 70);
     glPopMatrix();
 
-    glDisable(GL_LIGHTING);
-    glColor3f(0.85f, 0.85f, 0.88f);
+    // siatka – dalej metal, ale ju¿ pod lightingiem
+    setMetalMaterial();
+    glColor3f(0.85f, 0.85f, 0.88f);  // lekko jaœniejszy odcieñ, ale nadal materia³
+
     drawGuardWireDisk(0.18f);
     drawGuardWireDisk(-0.18f);
 
@@ -287,8 +282,6 @@ void drawGuard()
         glVertex3f(x, y, 0.22f);
     }
     glEnd();
-
-    glEnable(GL_LIGHTING);
 }
 
 void drawHead()
@@ -313,7 +306,7 @@ void drawHead()
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, 0.35f);
     glScalef(0.12f, 0.12f, 0.5f);
-    glColor3f(0.7f, 0.7f, 0.72f);
+    setMetalMaterial();
     glutSolidCube(1.0f);
     glPopMatrix();
 
@@ -425,6 +418,75 @@ void drawRoom()
     drawTexturedLeftWall();
 }
 
+void drawFan()
+{
+    drawBase();
+    drawStand();
+    drawHead();
+}
+
+void makeShadowMatrix(GLfloat shadowMat[16], const GLfloat plane[4], const GLfloat lightPos[4])
+{
+    GLfloat dot =
+        plane[0] * lightPos[0] +
+        plane[1] * lightPos[1] +
+        plane[2] * lightPos[2] +
+        plane[3] * lightPos[3];
+
+    shadowMat[0] = dot - lightPos[0] * plane[0];
+    shadowMat[4] = 0.0f - lightPos[0] * plane[1];
+    shadowMat[8] = 0.0f - lightPos[0] * plane[2];
+    shadowMat[12] = 0.0f - lightPos[0] * plane[3];
+
+    shadowMat[1] = 0.0f - lightPos[1] * plane[0];
+    shadowMat[5] = dot - lightPos[1] * plane[1];
+    shadowMat[9] = 0.0f - lightPos[1] * plane[2];
+    shadowMat[13] = 0.0f - lightPos[1] * plane[3];
+
+    shadowMat[2] = 0.0f - lightPos[2] * plane[0];
+    shadowMat[6] = 0.0f - lightPos[2] * plane[1];
+    shadowMat[10] = dot - lightPos[2] * plane[2];
+    shadowMat[14] = 0.0f - lightPos[2] * plane[3];
+
+    shadowMat[3] = 0.0f - lightPos[3] * plane[0];
+    shadowMat[7] = 0.0f - lightPos[3] * plane[1];
+    shadowMat[11] = 0.0f - lightPos[3] * plane[2];
+    shadowMat[15] = dot - lightPos[3] * plane[3];
+}
+
+void drawProjectedFanShadow(
+    const GLfloat lightPos[4],
+    const GLfloat plane[4],
+    float r, float g, float b, float a)
+{
+    GLfloat shadowMat[16];
+    makeShadowMatrix(shadowMat, plane, lightPos);
+
+    glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_LIGHTING_BIT | GL_POLYGON_BIT);
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glDepthMask(GL_FALSE);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+    glPolygonOffset(-1.0f, -1.0f);
+
+    glColor4f(r, g, b, a);
+
+    glPushMatrix();
+    glMultMatrixf(shadowMat);
+    drawFan();
+    glPopMatrix();
+
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glDepthMask(GL_TRUE);
+    glDisable(GL_BLEND);
+
+    glPopAttrib();
+}
+
 void drawFanShadow()
 {
     glDisable(GL_LIGHTING);
@@ -432,22 +494,78 @@ void drawFanShadow()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glColor4f(0.0f, 0.0f, 0.0f, 0.28f);
+    // --- CIEÑ NA BLACIE ---
 
     glPushMatrix();
-    // cien tuz nad blatem, pod wiatrakiem
+    // cien tu¿ nad blatem, pod wiatrakiem (ten sam z jakiego korzysta³eœ)
     glTranslatef(0.0f, -2.255f, -3.0f);
-    glScalef(1.7f, 1.0f, 1.15f);
 
+    // LIGHT0 - neutralny, mocniejszy
+    glColor4f(0.0f, 0.0f, 0.0f, 0.25f);
+    glPushMatrix();
+    glScalef(1.7f, 1.0f, 1.15f);
     glBegin(GL_TRIANGLE_FAN);
     glVertex3f(0.0f, 0.0f, 0.0f);
-
     for (int i = 0; i <= 40; i++)
     {
         float a = 2.0f * 3.1415926f * i / 40.0f;
         glVertex3f(cos(a), 0.0f, sin(a));
     }
     glEnd();
+    glPopMatrix();
+
+    // LIGHT1 - s³abszy, cieplejszy, lekko przesuniêty od okna
+    glColor4f(0.10f, 0.06f, 0.03f, 0.14f);
+    glPushMatrix();
+    glTranslatef(-0.25f, 0.0f, 0.18f);
+    glScalef(1.55f, 1.0f, 1.05f);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    for (int i = 0; i <= 40; i++)
+    {
+        float a = 2.0f * 3.1415926f * i / 40.0f;
+        glVertex3f(cos(a), 0.0f, sin(a));
+    }
+    glEnd();
+    glPopMatrix();
+
+    glPopMatrix();
+
+    // --- CIEÑ NA POD£ODZE ---
+
+    glPushMatrix();
+    // pod³oga jest na y = -4.7f
+    // wiatrak stoi na stole w (0, ?, -3), wiêc przesuwamy cieñ w okolice tej projekcji
+    glTranslatef(0.0f, -4.68f, -3.0f);
+
+    // LIGHT0 - szerszy, s³abszy na pod³odze
+    glColor4f(0.0f, 0.0f, 0.0f, 0.18f);
+    glPushMatrix();
+    glScalef(3.0f, 1.0f, 2.2f);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    for (int i = 0; i <= 40; i++)
+    {
+        float a = 2.0f * 3.1415926f * i / 40.0f;
+        glVertex3f(cos(a), 0.0f, sin(a));
+    }
+    glEnd();
+    glPopMatrix();
+
+    // LIGHT1 - ciep³y „ogon” na pod³odze id¹cy od okna
+    glColor4f(0.12f, 0.08f, 0.04f, 0.10f);
+    glPushMatrix();
+    glTranslatef(-0.5f, 0.0f, 0.35f);      // lekki shift od strony okna
+    glScalef(2.6f, 1.0f, 2.0f);
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    for (int i = 0; i <= 40; i++)
+    {
+        float a = 2.0f * 3.1415926f * i / 40.0f;
+        glVertex3f(cos(a), 0.0f, sin(a));
+    }
+    glEnd();
+    glPopMatrix();
 
     glPopMatrix();
 
@@ -459,14 +577,12 @@ void drawLightMarkers()
 {
     glDisable(GL_LIGHTING);
 
-    // marker zarowki
     glPushMatrix();
     glColor3f(1.0f, 0.95f, 0.6f);
     glTranslatef(0.0f, 4.3f, 0.0f);
     glutSolidSphere(0.12f, 12, 12);
     glPopMatrix();
 
-    // marker swiatla z okna
     glPushMatrix();
     glColor3f(1.0f, 0.8f, 0.4f);
     glTranslatef(-4.0f, 2.0f, 0.0f);
@@ -499,13 +615,8 @@ void display()
     glPushMatrix();
     glTranslatef(0.0f, 0.0f, -3.0f);
     drawTable();
-    drawBase();
-    drawStand();
-    drawHead();
+    drawFan();
     glPopMatrix();
-
-    drawFanShadow();
 
     glutSwapBuffers();
 }
-
