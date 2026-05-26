@@ -133,7 +133,7 @@
     <ClCompile Include="textures.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="animation.h" />
