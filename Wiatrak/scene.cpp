@@ -86,6 +86,7 @@ void drawCurtain()
 {
     float strength = getCurtainStrength();
 
+    // karnisz
     glPushMatrix();
     glColor3f(0.50f, 0.32f, 0.20f);
     glTranslatef(-4.22f, 1.9f, -0.20f);
@@ -94,22 +95,31 @@ void drawCurtain()
     glutSolidCube(1.0f);
     glPopMatrix();
 
+    // zas³ona - jeden materia³, trochê spokojniejsza fala
     glColor3f(0.93f, 0.72f, 0.80f);
 
-    for (int i = 0; i < 18; i++)
+    int segmentsZ = 18;
+    int segmentsY = 16;
+
+    for (int i = 0; i < segmentsZ; i++)
     {
-        float z = -1.92f + i * 0.19f;
+        float z0 = -1.92f + i * 0.19f;
+        float z1 = z0 + 0.19f;
 
         glBegin(GL_QUAD_STRIP);
-        for (int j = 0; j <= 16; j++)
+        for (int j = 0; j <= segmentsY; j++)
         {
-            float y = 1.8f - j * 0.22f;
+            float t = j / (float)segmentsY;
+            float y = 1.8f - t * 3.5f;
+
             float localPhase = gState.curtainTime * 2.2f + i * 0.35f + j * 0.18f;
-            float wave = sin(localPhase) * strength * 2.0f * (j / 16.0f);
+            float wave = sinf(localPhase) * strength * 0.25f * t; // du¿o mniejsza amplituda
+
+            float x = -4.18f + wave;
 
             glNormal3f(-1.0f, 0.0f, 0.0f);
-            glVertex3f(-4.18f + wave, y, z);
-            glVertex3f(-4.18f + wave, y, z + 0.18f);
+            glVertex3f(x, y, z0);
+            glVertex3f(x, y, z1);
         }
         glEnd();
     }
