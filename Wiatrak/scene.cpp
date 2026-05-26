@@ -9,28 +9,28 @@ void drawWindow()
 {
     glPushMatrix();
     glColor3f(0.9f, 0.88f, 0.82f);
-    glTranslatef(3.35f, 0.2f, 0.0f);
+    glTranslatef(-4.45f, 0.2f, 0.0f);
     glScalef(0.08f, 5.0f, 6.0f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(0.75f, 0.75f, 0.78f);
-    glTranslatef(3.2f, 0.25f, 0.0f);
+    glTranslatef(-4.3f, 0.25f, 0.0f);
     glScalef(0.06f, 3.0f, 3.6f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(0.65f, 0.82f, 0.92f);
-    glTranslatef(3.12f, 0.25f, 0.0f);
+    glTranslatef(-4.22f, 0.25f, 0.0f);
     glScalef(0.03f, 2.5f, 3.1f);
     glutSolidCube(1.0f);
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(0.7f, 0.7f, 0.72f);
-    glTranslatef(3.1f, 0.25f, 0.0f);
+    glTranslatef(-4.2f, 0.25f, 0.0f);
     glScalef(0.04f, 2.5f, 0.08f);
     glutSolidCube(1.0f);
     glPopMatrix();
@@ -42,7 +42,7 @@ void drawCurtain()
 
     glPushMatrix();
     glColor3f(0.35f, 0.25f, 0.15f);
-    glTranslatef(3.1f, 1.9f, -0.6f);
+    glTranslatef(-4.2f, 1.9f, -0.6f);
     glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
     glScalef(3.4f, 0.08f, 0.08f);
     glutSolidCube(1.0f);
@@ -59,11 +59,11 @@ void drawCurtain()
         {
             float y = 1.8f - j * 0.22f;
             float localPhase = gState.curtainTime * 2.2f + i * 0.35f + j * 0.18f;
-            float wave = sin(localPhase) * strength * (j / 16.0f);
+            float wave = sin(localPhase) * strength * 2.0f * (j / 16.0f);
 
             glNormal3f(-1.0f, 0.0f, 0.0f);
-            glVertex3f(3.05f + wave, y, z);
-            glVertex3f(3.05f + wave, y, z + 0.16f);
+            glVertex3f(-4.15f + wave, y, z);
+            glVertex3f(-4.15f + wave, y, z + 0.16f);
         }
         glEnd();
     }
@@ -318,10 +318,16 @@ void display()
 
     drawWindow();
     drawCurtain();
+
+    glPushMatrix();
+    glTranslatef(0.0f, 0.0f, -3.0f);
+
     drawTable();
     drawBase();
     drawStand();
     drawHead();
+
+    glPopMatrix();
 
     glutSwapBuffers();
 }
