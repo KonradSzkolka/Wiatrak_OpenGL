@@ -4,6 +4,8 @@
 
 using namespace std;
 
+
+float curtainTime = 0.0f;
 float tiltAngle = 0.0f;
 float bladeAngle = 0.0f;
 int fanSpeedLevel = 0; // 0,1,2,3
@@ -45,6 +47,105 @@ void init()
     glClearColor(0.08f, 0.08f, 0.12f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     initLighting();
+}
+
+float getCurtainStrength()
+{
+    switch (fanSpeedLevel)
+    {
+    case 1: return 0.08f;
+    case 2: return 0.16f;
+    case 3: return 0.26f;
+    default: return 0.02f;
+    }
+}
+
+void drawCurtain()
+{
+    float strength = getCurtainStrength();
+
+    // karnisz
+    glPushMatrix();
+    glColor3f(0.35f, 0.25f, 0.15f);
+    glTranslatef(0.0f, 2.0f, -3.2f);
+    glScalef(3.8f, 0.08f, 0.08f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // lewa zaslona
+    glColor3f(0.82f, 0.82f, 0.9f);
+
+    for (int i = 0; i < 14; i++)
+    {
+        float x = -1.8f + i * 0.13f;
+
+        glBegin(GL_QUAD_STRIP);
+        for (int j = 0; j <= 16; j++)
+        {
+            float y = 1.9f - j * 0.22f;
+            float localPhase = curtainTime * 2.2f + i * 0.4f + j * 0.15f;
+            float wave = sin(localPhase) * strength * (j / 16.0f);
+
+            glNormal3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(x, y, -3.2f + wave);
+            glVertex3f(x + 0.11f, y, -3.2f + wave);
+        }
+        glEnd();
+    }
+
+    // prawa zaslona
+    for (int i = 0; i < 14; i++)
+    {
+        float x = 0.1f + i * 0.13f;
+
+        glBegin(GL_QUAD_STRIP);
+        for (int j = 0; j <= 16; j++)
+        {
+            float y = 1.9f - j * 0.22f;
+            float localPhase = curtainTime * 2.2f + i * 0.4f + j * 0.15f + 1.2f;
+            float wave = sin(localPhase) * strength * (j / 16.0f);
+
+            glNormal3f(0.0f, 0.0f, 1.0f);
+            glVertex3f(x, y, -3.2f + wave);
+            glVertex3f(x + 0.11f, y, -3.2f + wave);
+        }
+        glEnd();
+    }
+}
+
+void drawWindow()
+{
+    // sciana
+    glPushMatrix();
+    glColor3f(0.9f, 0.88f, 0.82f);
+    glTranslatef(0.0f, 0.2f, -3.4f);
+    glScalef(6.0f, 5.0f, 0.08f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // rama okna
+    glPushMatrix();
+    glColor3f(0.75f, 0.75f, 0.78f);
+    glTranslatef(0.0f, 0.2f, -3.25f);
+    glScalef(3.4f, 3.2f, 0.06f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // szyba
+    glPushMatrix();
+    glColor3f(0.65f, 0.82f, 0.92f);
+    glTranslatef(0.0f, 0.2f, -3.18f);
+    glScalef(2.9f, 2.7f, 0.03f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // pionowy podzial
+    glPushMatrix();
+    glColor3f(0.7f, 0.7f, 0.72f);
+    glTranslatef(0.0f, 0.2f, -3.15f);
+    glScalef(0.08f, 2.7f, 0.05f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
 }
 
 void setLights()
@@ -343,6 +444,8 @@ void display()
 
     setLights();
 
+    drawWindow();
+    drawCurtain();
     drawTable();
     drawBase();
     drawStand();
@@ -372,6 +475,8 @@ void update()
             headDirection = 1.0f;
         }
     }
+
+    curtainTime += 0.03f;
 
     glutPostRedisplay();
 }
